@@ -245,6 +245,7 @@ export class CompilerDownloader implements ICompilerDownloader {
     version: string
   ): Promise<CompilerBuild | undefined> {
     const listPath = this._getCompilerListPath();
+    log(`Compiler list path: ${listPath}`);
     if (!(await fsExtra.pathExists(listPath))) {
       return undefined;
     }
@@ -284,12 +285,16 @@ export class CompilerDownloader implements ICompilerDownloader {
 
   private async _shouldDownloadCompilerList(): Promise<boolean> {
     const listPath = this._getCompilerListPath();
+    log(`Compiler list path: ${listPath}`);
+
     if (!(await fsExtra.pathExists(listPath))) {
       return true;
     }
 
     const stats = await fsExtra.stat(listPath);
     const age = new Date().valueOf() - stats.ctimeMs;
+
+    log(`Compiler list age: ${age}, ${this._compilerListCachePeriodMs}`);
 
     return age > this._compilerListCachePeriodMs;
   }
